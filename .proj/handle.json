@@ -1,0 +1,24 @@
+{
+   "name": "init proj",
+   "author": "djozoleta",
+   "version": 0.1,
+   "repo": "none",
+   "license": "MIT",
+   "description": "A tool to help with making projects.",
+
+   "CC": "clang",
+   "lang": "c++",
+   "langver": 23,
+   "gnu_ext": true,
+   "flags": "-Wall -Wextra -Wpedantic -O2",
+   "bin": "./bin",
+   "src": "./src",
+   "projdir": ".proj",
+   "libdir": "lib",
+   "incdir": false,
+   "executable": "init_proj",
+
+   "libs": [
+      
+   ]
+}
