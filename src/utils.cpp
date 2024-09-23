@@ -1,50 +1,27 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <cctype>
-#include <fstream>
-#include <filesystem>
-#include <cassert>
+#include "utils.hpp"
 
-namespace fs = std::filesystem;
-
-class str : public std::string
+bool str::starts_with(const std::string &prefix) const
 {
-public:
-   str() : std::string() {}
-   str(const std::string &s) : std::string(s) {}
-   str(const char *s) : std::string(s) {}
-
-   bool starts_with(const std::string &prefix) const
-   {
-      if (this->size() < prefix.size())
-         return false;
-      return this->compare(0, prefix.size(), prefix) == 0;
-   }
-
-   std::string cppstr() const
-   {
-      return *this;
-   }
-
-   str &operator=(const str &s)
-   {
-      if (this != &s)
-      {
-         std::string::operator=(s);
-      }
-      return *this;
-   }
-};
-
-
-void print_usage()
-{
-   std::cout << "Usage: init_proj command [command_args...] [flags..]\n";
+   if (this->size() < prefix.size())
+      return false;
+   return this->compare(0, prefix.size(), prefix) == 0;
 }
 
-void exec(const str &cmd)
+std::string str::cpp_str() const
+{
+   return *this;
+}
+
+str &str::operator=(const str &s)
+{
+   if (this != &s)
+   {
+      std::string::operator=(s);
+   }
+   return *this;
+}
+
+void utils::exec(const str &cmd)
 {
 #ifdef _Debug
    std::cout << "Command "
@@ -61,7 +38,15 @@ void exec(const str &cmd)
        ;
 }
 
-str get_exec(const str &cmd)
+void utils::tryexec(const str &cmd)
+{
+   if (std::system(cmd.c_str()) != 0)
+   {
+      std::cout << "Failed to run " << cmd << "\n";
+   }
+}
+
+str utils::get_exec(const str &cmd)
 {
    std::vector<char> buffer;
    std::string result;
@@ -81,7 +66,7 @@ str get_exec(const str &cmd)
    return result;
 }
 
-str read_file(const str &filename)
+str utils::read_file(const str &filename)
 {
    str out;
    std::ifstream file(filename); // Open the file
@@ -105,7 +90,7 @@ str read_file(const str &filename)
    return out;
 }
 
-str read_file_newline(const str &filename)
+str utils::read_file_newline(const str &filename)
 {
    str out;
    std::ifstream file(filename); // Open the file
@@ -127,12 +112,4 @@ str read_file_newline(const str &filename)
    file.close(); // Close the file
 
    return out;
-}
-
-void tryexec(const str &cmd)
-{
-   if (std::system(cmd.c_str()) != 0)
-   {
-      std::cout << "Failed to run " << cmd << "\n";
-   }
 }

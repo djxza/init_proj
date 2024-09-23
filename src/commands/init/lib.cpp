@@ -1,5 +1,7 @@
 #include "commands/init/lib.hpp"
 
+using namespace utils;
+
 void init_lib(const fs::path &dest)
 {
     const fs::path main = fs::path("/home/djozoleta/dev/init_proj/");
@@ -142,7 +144,7 @@ void init_lib(const fs::path &dest)
 
     if (incdir != "false")
     {
-        exec("mkdir -p " + (dest / fs::path(incdir.cppstr())).string());
+        exec("mkdir -p " + (dest / fs::path(incdir.cpp_str())).string());
     }
 
     tryexec("git init " + dest.string());

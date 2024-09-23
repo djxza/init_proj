@@ -1,5 +1,7 @@
 #include "commands/init/exe.hpp"
 
+using namespace utils;
+
 void init_exe(const fs::path &dest)
 {
     /* Ovde za sada */
@@ -127,7 +129,7 @@ void init_exe(const fs::path &dest)
 
     if (incdir != "false")
     {
-        exec("mkdir -p " + (dest / fs::path(incdir.cppstr())).string());
+        exec("mkdir -p " + (dest / fs::path(incdir.cpp_str())).string());
     }
 
     tryexec("git init " + name);

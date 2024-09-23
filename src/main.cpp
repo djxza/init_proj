@@ -7,9 +7,14 @@
 #include <filesystem>
 #include <cassert>
 
-#include "std.hpp"
+#include "utils.hpp"
 #include "commands/init/exe.hpp"
 #include "commands/init/lib.hpp"
+
+void print_usage()
+{
+   std::cout << "Usage: init_proj command [command_args...] [flags..]\n";
+}
 
 int main(int ac, const char *argv[])
 {
@@ -43,9 +48,9 @@ int main(int ac, const char *argv[])
          return EXIT_FAILURE;
       }
       else if (command_args[0] == "exe")
-         init_exe(fs::path(command_args[1].cppstr()));
+         init_exe(fs::path(command_args[1].cpp_str()));
       else if (command_args[0] == "lib")
-         init_lib(fs::path(command_args[1].cppstr()));
+         init_lib(fs::path(command_args[1].cpp_str()));
       else
          std::cout << "Usage: " << argv[0] << " init exe name or " << argv[0] << " init lib name\n";
    }
