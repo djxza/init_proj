@@ -100,6 +100,11 @@ default: all
 
 all: build
 
+prepush:
+	@rm -rf ./test
+	@mkdir test
+	git add .
+
 # Info target to display project details
 info:
 	@echo "init_proj displays app info:"
