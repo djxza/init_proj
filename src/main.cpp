@@ -98,12 +98,14 @@ str get_exec(const str &cmd)
 {
    std::vector<char> buffer;
    std::string result;
+
    // Open a pipe to run the command and get the output
    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
    if (!pipe)
    {
       throw std::runtime_error("popen() failed!");
    }
+
    // Read the command's output from the pipe
    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
    {
@@ -168,36 +170,58 @@ void tryexec(const str &cmd)
    }
 }
 
-void init_exec(const str &project_name)
+void init_exe(const fs::path &dest)
 {
-   const fs::path dest(project_name.cppstr());
+   /* Ovde za sada */
    const fs::path main = fs::path("/home/djozoleta/dev/init_proj/");
 
-   str name = project_name;
+   str name = dest.filename().string();
    str author = "anonymous";
    str repo = "none";
    str license = "MIT";
    str desc;
    str incdir = "false";
-   str executable = project_name; // Default executable name
-   str lang = "c";                // Default to C
-   str langver = "11";            // Default to C11
+   str executable = name; // Default executable name
+   str lang = "c";        // Default to C
+   str langver = "11";    // Default to C11
+   str ext;
+   std::ofstream handle;
 
    // Ask for the language
-   std::cout << "Enter project language (C or C++): ";
+   std::cout << "Enter executable language (C or C++): ";
    std::getline(std::cin, lang);
    std::transform(lang.begin(), lang.end(), lang.begin(), ::tolower);
 
    // Validate the language input
-   if (lang != "c" && lang != "c++")
+   /*
+   if (lang != "c"   ||
+       lang != "C"   &&
+       lang != "c++" ||
+       lang != "C++" ||
+       lang != "cpp" ||
+       lang != "CPP")
+   */
+
+   if (lang != "c" &&
+       lang != "C" &&
+       lang != "c++" &&
+       lang != "C++" &&
+       lang != "cpp" &&
+       lang != "CPP")
    {
       std::cerr << "Error: Unsupported language. Only C and C++ are allowed." << std::endl;
       exit(EXIT_FAILURE);
    }
 
    // Set language version defaults
-   if (lang == "c++")
+   if (lang == "c++" || lang == "cpp")
+   {
+      ext = ".cpp";
+      lang = "c++";
       langver = "17";
+   }
+   else
+      ext = ".c";
 
    std::cout << "Author [" << author << "]: ";
    std::getline(std::cin, author);
@@ -233,7 +257,7 @@ void init_exec(const str &project_name)
          incdir = "./include";
    }
 
-   std::cout << "Executable name [" << executable << "]: ";
+   std::cout << "Library name [" << executable << "]: ";
    std::getline(std::cin, executable);
    if (executable.empty())
       executable = name;
@@ -275,34 +299,209 @@ void init_exec(const str &project_name)
                               "}\n";
 
    // Initialize the project directory and files
-   exec("mkdir -p " + project_name);
-   exec("rm -rf " + project_name + "/*");
-   exec("mkdir -p " + project_name + "/src " + project_name + "/bin " + project_name + "/.proj");
+   exec("mkdir -p " + dest.string());
+   exec("rm -rf " + dest.string() + "/*");
+   exec("mkdir -p " + dest.string() + "/src");
+   exec("mkdir -p " + dest.string() + "/bin");
+   exec("mkdir -p " + dest.string() + "/.proj");
 
    if (incdir != "false")
    {
       exec("mkdir -p " + (dest / fs::path(incdir.cppstr())).string());
    }
 
-   tryexec("git init " + project_name);
+   tryexec("git init " + name);
 
    // Write the handle.json
-   std::ofstream handle(dest / ".proj/handle.json", std::ios::trunc);
+   handle = std::ofstream(dest / ".proj/handle.json", std::ios::trunc);
    handle << project << std::endl;
-   str make = read_file_newline((main / "defaults" / "makefile").string());
+
+   str make = read_file_newline((main / "defaults/exe.mk").string());
    handle = std::ofstream(dest / "makefile", std::ios::trunc);
    handle << make << std::endl;
+
+   str start = read_file_newline((main / "defaults" / str("main" + ext)).string());
+   handle = std::ofstream(dest / "src" / str("main" + ext), std::ios::trunc);
+   handle << start;
 
    // Make sure directories exist
    assert(fs::exists(dest / "src"));
    assert(fs::exists(dest / "bin"));
    assert(fs::exists(dest / ".proj"));
 
-   std::cout << "Project initialized successfully in " << project_name << "!" << std::endl;
+   std::cout << "Project initialized successfully in " << name << "!" << std::endl;
 }
 
-void init_lib(const str &project_name)
+void init_lib(const fs::path &dest)
 {
+   const fs::path main = fs::path("/home/djozoleta/dev/init_proj/");
+
+   str name = dest.filename().string();
+   str author = "anonymous";
+   str repo = "none";
+   str license = "MIT";
+   str desc;
+   str incdir = "./include";
+   str internal_inc;
+   str library = name; // Default library name
+   str lang = "c";     // Default to C
+   str langver = "11"; // Default to C11
+   str hext;
+   str cext;
+
+   std::ofstream handle;
+
+   // Ask for the language
+   std::cout << "Enter library language (C or C++): ";
+   std::getline(std::cin, lang);
+   std::transform(lang.begin(), lang.end(), lang.begin(), ::tolower);
+
+   // Validate the language input
+   if (lang != "c" &&
+       lang != "c++" &&
+       lang != "cpp")
+   {
+      std::cerr << "Error: Unsupported language. Only C and C++ are allowed." << std::endl;
+      exit(EXIT_FAILURE);
+   }
+
+   // Set language version defaults
+   if (lang == "c++" || lang == "cpp")
+   {
+      hext = ".hpp";
+      cext = ".cpp";
+      lang = "c++";
+      langver = "17";
+   }
+   else
+   {
+      hext = ".h";
+      cext = ".c";
+   }
+   // std::cout << dest.string() << std::endl;
+
+   std::cout << "Author [" << author << "]: ";
+   std::getline(std::cin, author);
+   if (author.empty())
+      author = "anonymous";
+
+   std::cout << "Repo [" << repo << "]: ";
+   std::getline(std::cin, repo);
+   if (repo.empty())
+      repo = "none";
+
+   std::cout << "License [" << license << "]: ";
+   std::getline(std::cin, license);
+   if (license.empty())
+      license = "MIT";
+
+   std::cout << "Description: ";
+   std::getline(std::cin, desc);
+
+   // TODO: ovde proiject name zameni samo imenom foldera
+   std::cout << "Use include/custom_folder_name? [Y/n] ";
+   str in;
+   std::getline(std::cin, in); // No std::cin.ignore() here
+
+   if ((in == "n" || in == "N") && !in.empty())
+      ;
+   else
+   {
+      std::cout << " |-> Folder name dir [include/custom_folder_name]: ";
+      std::getline(std::cin, internal_inc);
+      if (incdir.empty())
+         incdir = "./include/" + name;
+      else
+         incdir = "./include/" + internal_inc;
+   }
+
+   str project = "{\n"
+                 "   \"name\": \"" +
+                 name + "\",\n"
+                        "   \"author\": \"" +
+                 author + "\",\n"
+                          "   \"version\": 0,\n"
+                          "   \"repo\": \"" +
+                 repo + "\",\n"
+                        "   \"license\": \"" +
+                 license + "\",\n"
+                           "   \"description\": \"" +
+                 desc + "\",\n"
+                        "\n"
+                        "   \"CC\": \"gcc\",\n"
+                        "   \"lang\": \"" +
+                 lang + "\",\n"
+                        "   \"langver\": \"" +
+                 langver + "\",\n"
+                           "   \"gnu_ext\": false,\n"
+                           "   \"flags\": \"-I./include\",\n"
+                           "   \"link_flags\": \"-I./lib/" +
+                 name + "/include" +
+                 (internal_inc.empty() ? "/" : internal_inc + "/") +
+                 " -L " + "./lib/" + name + "bin" +
+                 " -l" + name + "\",\n" +
+                 "   \"bin\": \"./bin\",\n"
+                 "   \"src\": \"./src\",\n"
+                 "   \"projdir\": \"./.proj\",\n"
+                 "   \"libdir\": \"lib\",\n"
+                 "   \"incdir\": \"" +
+                 incdir + "\",\n"
+                          "\n"
+                          "   \"library\": \"" +
+                 name + "\",\n"
+                        "\n"
+                        "   \"libs\": [\n"
+                        "      \n"
+                        "   ]\n"
+                        "}\n";
+
+   str default_src = "#include \"" +
+                     (internal_inc.empty() ? str("") : internal_inc + "/") +
+                     name +
+                     ".h\"\n"
+                     "\n"
+                     "void test() {\n"
+                     "    printf(\"Hello, World!\\n\");\n"
+                     "}\n";
+
+   // Initialize the project directory and files
+   exec("mkdir -p " + dest.string());
+   std::cout << dest.string() << std::endl;
+   exec("rm -rf " + dest.string() + "/*");
+   exec("mkdir -p " + dest.string() + "/src");
+   exec("mkdir -p " + dest.string() + "/bin");
+   exec("mkdir -p " + dest.string() + "/include");
+   exec("mkdir -p " + dest.string() + "/.proj");
+
+   if (incdir != "false")
+   {
+      exec("mkdir -p " + (dest / fs::path(incdir.cppstr())).string());
+   }
+
+   tryexec("git init " + dest.string());
+
+   // Write the handle.json
+   handle = std::ofstream(dest / ".proj/handle.json", std::ios::trunc);
+   handle << project << std::endl;
+
+   handle = std::ofstream(dest / str("src/" + name + cext).c_str(), std::ios::trunc);
+   handle << default_src << std::endl;
+
+   str make = read_file_newline((main / "defaults/lib.mk").string());
+   handle = std::ofstream(dest / "makefile", std::ios::trunc);
+   handle << make << std::endl;
+
+   str default_header = read_file_newline((main / "defaults" / str("default" + hext)).string());
+   handle = std::ofstream(dest / "include" / (internal_inc.empty() ? "." : internal_inc) / str(name + hext), std::ios::trunc);
+   handle << default_header;
+
+   // Make sure directories exist
+   assert(fs::exists(dest / "src"));
+   assert(fs::exists(dest / "bin"));
+   assert(fs::exists(dest / "include"));
+   assert(fs::exists(dest / ".proj"));
+
+   std::cout << "Project initialized successfully in " << name << "!" << std::endl;
 }
 
 int main(int ac, const char *argv[])
@@ -337,9 +536,9 @@ int main(int ac, const char *argv[])
          return EXIT_FAILURE;
       }
       else if (command_args[0] == "exe")
-         init_exec(command_args[1]);
+         init_exe(fs::path(command_args[1].cppstr()));
       else if (command_args[0] == "lib")
-         init_lib(command_args[1]);
+         init_lib(fs::path(command_args[1].cppstr()));
       else
          std::cout << "Usage: " << argv[0] << " init exe name or " << argv[0] << " init lib name\n";
    }

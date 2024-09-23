@@ -1,0 +1,3 @@
+This file is for registered projects (init_proj register).
+which means the stuff in libs can be used as a place to pull libraries from,
+using init_proj install glfw (will look in libs/glfw)

@@ -48,6 +48,10 @@ ifeq ($(LANG), c++)
                CC = clang++
        endif
 
+       ifeq ($(CC),gcc++)
+              CC = g++
+       endif
+
        # Handle language version
        ifeq ($(shell $(INTERPRETER) $(PROJDIR)/handle.json langver), 23)
                IS23 = 1

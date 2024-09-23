@@ -1,0 +1,21 @@
+{
+    "name": "",
+    "author": "",
+    "version": 0,
+    "repo": "none",
+    "license": "MIT",
+    "description": "",
+    "CC": "gcc",
+    "lang": "c",
+    "langver": "14",
+    "gnu_ext": false,
+    "flags": "",
+    "link_flags": "",
+    "bin": "./bin",
+    "src": "./src",
+    "projdir": "./.proj",
+    "libdir": "lib",
+    "incdir": false,
+    "library": "",
+    "libs": []
+}

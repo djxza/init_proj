@@ -5,7 +5,6 @@
    "repo": "none",
    "license": "MIT",
    "description": "",
-
    "CC": "gcc",
    "lang": "c",
    "langver": "14",
@@ -16,8 +15,6 @@
    "projdir": "./.proj",
    "libdir": "lib",
    "incdir": false,
-
-   "libs": [
-      
-   ]
+   "executable": "",
+   "libs": []
 }
