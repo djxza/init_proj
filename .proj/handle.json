@@ -10,7 +10,7 @@
    "lang": "c++",
    "langver": 23,
    "gnu_ext": true,
-   "flags": "-Wall -Wextra -Wpedantic -O2",
+   "flags": "-g -v -Wall -Wextra -Wpedantic -O2",
    "bin": "./bin",
    "src": "./src",
    "projdir": ".proj",
