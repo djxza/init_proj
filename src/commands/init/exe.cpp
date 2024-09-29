@@ -2,7 +2,7 @@
 
 using namespace utils;
 
-void init_exe(const fs::path &dest)
+void commands::init::exe(const fs::path &dest)
 {
     /* Ovde za sada */
     const fs::path main = fs::path("/home/djozoleta/dev/init_proj/");

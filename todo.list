@@ -1,0 +1,2 @@
+redfactor init/ to namespaces
+refactor all src/command to namespace commands

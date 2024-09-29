@@ -21,6 +21,19 @@ str &str::operator=(const str &s)
    return *this;
 }
 
+str arg0;
+
+void utils::set_arg0(const str &x)
+{
+   arg0 = x;
+}
+
+const str utils::get_arg0()
+{
+   return arg0;
+}
+
+
 void utils::exec(const str &cmd)
 {
 #ifdef _Debug

@@ -1,3 +1,9 @@
-#include "utils.hpp"
+#pragma once
 
-void init_lib(const fs::path &dest);
+#include "commands/init/init.hpp"
+
+namespace commands {
+    namespace init {
+        void lib(const fs::path &dest);
+    }
+}

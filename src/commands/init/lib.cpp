@@ -2,7 +2,7 @@
 
 using namespace utils;
 
-void init_lib(const fs::path &dest)
+void commands::init::lib(const fs::path &dest)
 {
     const fs::path main = fs::path("/home/djozoleta/dev/init_proj/");
 

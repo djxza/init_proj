@@ -27,6 +27,15 @@ public:
 /* added namespace to make managment easier */
 namespace utils
 {
+    enum class fn_attempt {
+        SUCCESS,
+        FAILURE
+    };
+
+    /* relative executable bath thing */
+    void set_arg0(const str& arg0);
+    const str get_arg0();
+
     void exec(const str &cmd);
     void tryexec(const str &cmd);
 

@@ -100,7 +100,7 @@ default: all
 
 all: build
 
-prepush:
+prepush: clean
 	@rm -rf ./test
 	@mkdir test
 	git add .
