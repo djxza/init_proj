@@ -19,6 +19,8 @@
    "executable": "init_proj",
 
    "libs": [
-      
+      "skibussy",
+      "hello",
+      "Hels comin withma"
    ]
 }

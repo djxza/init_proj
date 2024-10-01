@@ -1,4 +1,4 @@
- #include <iostream>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -39,7 +39,7 @@ int main(int ac, const char** argv) {
    // Open the JSON file
    std::ifstream read(argv[1]);
    if (!read.good()) {
-      std::cerr << "Failed to read " << argv[1] << ".\n";
+      std::cerr << " Failed to read " << argv[1] << ".\n";
       quit();
    }
 

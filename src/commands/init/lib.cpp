@@ -85,6 +85,7 @@ void commands::init::lib(const fs::path &dest)
     }
 
     str project = "{\n"
+                  "   \"type\": \"exe\","
                   "   \"name\": \"" +
                   name + "\",\n"
                          "   \"author\": \"" +

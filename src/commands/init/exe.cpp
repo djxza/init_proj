@@ -86,6 +86,7 @@ void commands::init::exe(const fs::path &dest)
 
     // JSON template updated with language
     str project = "{\n"
+                  "   \"type\": \"exe\","  
                   "   \"name\": \"" +
                   name + "\",\n"
                          "   \"author\": \"" +
